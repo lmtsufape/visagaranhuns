@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\RelatorioAgentes;
 use Illuminate\Http\Request;
 use App\Inspetor;
 use App\User;
@@ -26,7 +27,7 @@ class InspetorController extends Controller
     public function listarInspetores()
     {
         $inspetores = User::where("tipo", "inspetor")->where("status_cadastro", "aprovado")->get();
-        return view('coordenador/inspetores_coordenador', ['inspetores'  => $inspetores]);
+        return view('coordenador/inspetores_coordenador', ['inspetores' => $inspetores]);
     }
 
     public function alterarDados(Request $request)
@@ -34,11 +35,11 @@ class InspetorController extends Controller
         $inspetor = Inspetor::where('user_id', $request->user)->first();
         // dd($inspetor);
         return view('inspetor/editar_dados', [
-            'nome'            => $inspetor->user->name,
-            'cpf'             => $inspetor->cpf,
-            'formacao'        => $inspetor->formacao,
-            'especializacao'  => $inspetor->especializacao,
-            'telefone'        => $inspetor->telefone,
+            'nome' => $inspetor->user->name,
+            'cpf' => $inspetor->cpf,
+            'formacao' => $inspetor->formacao,
+            'especializacao' => $inspetor->especializacao,
+            'telefone' => $inspetor->telefone,
         ]);
     }
 
@@ -47,16 +48,16 @@ class InspetorController extends Controller
 
         $messages = [
             'required' => 'O campo :attribute não foi passado!',
-            'string'   => 'O campo :attribute deve ser do tipo texto!',
+            'string' => 'O campo :attribute deve ser do tipo texto!',
         ];
 
         $validator = Validator::make($request->all(), [
 
-            'name'           => 'required|string',
-            'cpf'            => 'required|string',
-            'formacao'       => 'nullable|string',
+            'name' => 'required|string',
+            'cpf' => 'required|string',
+            'formacao' => 'nullable|string',
             'especializacao' => 'nullable|string',
-            'telefone'       => 'required|string',
+            'telefone' => 'required|string',
 
         ], $messages);
 
@@ -67,13 +68,13 @@ class InspetorController extends Controller
         }
 
         $inspetor = Inspetor::where("user_id", Auth::user()->id)->first();
-        $user     = User::find($inspetor->user_id);
+        $user = User::find($inspetor->user_id);
         // dd($inspetor);
 
-        $user->name               = $request->name;
-        $inspetor->cpf            = $request->cpf;
-        $inspetor->telefone       = $request->telefone;
-        $inspetor->formacao       = $request->formacao;
+        $user->name = $request->name;
+        $inspetor->cpf = $request->cpf;
+        $inspetor->telefone = $request->telefone;
+        $inspetor->formacao = $request->formacao;
         $inspetor->especializacao = $request->especializacao;
 
         $inspetor->save();
@@ -87,7 +88,7 @@ class InspetorController extends Controller
     {
         // $inspetor = Inspetor::where('user_id', $request->user)->first();
         // dd($inspetor->user->password);
-        // $senha = Crypt::decrypt($inspetor->user->password);        
+        // $senha = Crypt::decrypt($inspetor->user->password);
         return view('inspetor/editar_senha');
     }
 
@@ -133,7 +134,7 @@ class InspetorController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -141,19 +142,19 @@ class InspetorController extends Controller
         $user = User::find(Auth::user()->id);
 
         $messages = [
-            'unique'   => 'Um campo igual a :attribute já está cadastrado no sistema!',
+            'unique' => 'Um campo igual a :attribute já está cadastrado no sistema!',
             'required' => 'O campo :attribute não foi passado!',
-            'string'   => 'O campo :attribute deve ser texto!',
+            'string' => 'O campo :attribute deve ser texto!',
         ];
 
         $validator = Validator::make($request->all(), [
 
-            'nome'           => 'required|string',
-            'formacao'       => 'nullable|string',
+            'nome' => 'required|string',
+            'formacao' => 'nullable|string',
             'especializacao' => 'nullable|string',
-            'cpf'            => 'required|string|unique:agente,cpf',
-            'telefone'       => 'required|string',
-            'password'       => 'required',
+            'cpf' => 'required|string|unique:agente,cpf',
+            'telefone' => 'required|string',
+            'password' => 'required',
 
         ], $messages);
 
@@ -170,11 +171,11 @@ class InspetorController extends Controller
         $user->save();
 
         $inspetor = Inspetor::create([
-            'formacao'       => $request->formacao,
+            'formacao' => $request->formacao,
             'especializacao' => $request->especializacao,
-            'cpf'            => $request->cpf,
-            'telefone'       => $request->telefone,
-            'user_id'        => $user->id,
+            'cpf' => $request->cpf,
+            'telefone' => $request->telefone,
+            'user_id' => $user->id,
         ]);
 
 
@@ -184,7 +185,7 @@ class InspetorController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -195,7 +196,7 @@ class InspetorController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -206,8 +207,8 @@ class InspetorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -218,7 +219,7 @@ class InspetorController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -348,18 +349,18 @@ class InspetorController extends Controller
             $telefone = Telefone::where('empresa_id', $indice->requerimento->empresa->id)
                 ->first();
 
-            $obj = (object) array(
-                'empresa_nome'  => $indice->requerimento->empresa->nome,
-                'rua'           => $endereco->rua,
-                'numero'        => $endereco->numero,
-                'bairro'        => $endereco->bairro,
-                'cep'           => $endereco->cep,
-                'cnpjcpf'          => $indice->requerimento->empresa->cnpjcpf,
+            $obj = (object)array(
+                'empresa_nome' => $indice->requerimento->empresa->nome,
+                'rua' => $endereco->rua,
+                'numero' => $endereco->numero,
+                'bairro' => $endereco->bairro,
+                'cep' => $endereco->cep,
+                'cnpjcpf' => $indice->requerimento->empresa->cnpjcpf,
                 'representante_legal' => $indice->requerimento->empresa->user->name,
-                'telefone1'     => $telefone->telefone1,
-                'telefone2'     => $telefone->telefone2,
-                'data'          => $indice->data,
-                'status'        => $indice->status,
+                'telefone1' => $telefone->telefone1,
+                'telefone2' => $telefone->telefone2,
+                'data' => $indice->data,
+                'status' => $indice->status,
             );
             array_push($temp, $obj);
         }
@@ -384,47 +385,47 @@ class InspetorController extends Controller
             if ($indice->requerimento_id == null) {
                 if ($relatorio != null) {
                     if ($notificacao != null) {
-                        $obj = (object) array(
-                            'data'             => $indice->data,
-                            'statusInspecao'   => $indice->status,
-                            'motivoInspecao'   => $indice->motivo,
-                            'inspetor_id'      => $indice->inspetor_id,
-                            'requerimento_id'  => null,
-                            'nomeEmpresa'      => $indice->denuncia->empresa,
+                        $obj = (object)array(
+                            'data' => $indice->data,
+                            'statusInspecao' => $indice->status,
+                            'motivoInspecao' => $indice->motivo,
+                            'inspetor_id' => $indice->inspetor_id,
+                            'requerimento_id' => null,
+                            'nomeEmpresa' => $indice->denuncia->empresa,
 
-                            'relatorio_id'     => $relatorio->id,
-                            'inspecao_id'      => $indice->id,
+                            'relatorio_id' => $relatorio->id,
+                            'inspecao_id' => $indice->id,
                             'relatorio_status' => $relatorio->status,
                             'notificacao_status' => $notificacao->status,
                         );
                         array_push($inspecoes, $obj);
                     } else {
-                        $obj = (object) array(
-                            'data'             => $indice->data,
-                            'statusInspecao'   => $indice->status,
-                            'motivoInspecao'   => $indice->motivo,
-                            'inspetor_id'      => $indice->inspetor_id,
-                            'requerimento_id'  => null,
-                            'nomeEmpresa'      => $indice->denuncia->empresa,
+                        $obj = (object)array(
+                            'data' => $indice->data,
+                            'statusInspecao' => $indice->status,
+                            'motivoInspecao' => $indice->motivo,
+                            'inspetor_id' => $indice->inspetor_id,
+                            'requerimento_id' => null,
+                            'nomeEmpresa' => $indice->denuncia->empresa,
 
-                            'relatorio_id'     => $relatorio->id,
-                            'inspecao_id'      => $indice->id,
+                            'relatorio_id' => $relatorio->id,
+                            'inspecao_id' => $indice->id,
                             'relatorio_status' => $relatorio->status,
                             'notificacao_status' => null,
                         );
                         array_push($inspecoes, $obj);
                     }
                 } else {
-                    $obj = (object) array(
-                        'data'             => $indice->data,
-                        'statusInspecao'   => $indice->status,
-                        'motivoInspecao'   => $indice->motivo,
-                        'inspetor_id'      => $indice->inspetor_id,
-                        'requerimento_id'  => null,
-                        'nomeEmpresa'      => $indice->denuncia->empresa,
+                    $obj = (object)array(
+                        'data' => $indice->data,
+                        'statusInspecao' => $indice->status,
+                        'motivoInspecao' => $indice->motivo,
+                        'inspetor_id' => $indice->inspetor_id,
+                        'requerimento_id' => null,
+                        'nomeEmpresa' => $indice->denuncia->empresa,
 
-                        'relatorio_id'     => null,
-                        'inspecao_id'      => $indice->id,
+                        'relatorio_id' => null,
+                        'inspecao_id' => $indice->id,
                         'relatorio_status' => null,
                         'notificacao_status' => null,
                     );
@@ -433,50 +434,98 @@ class InspetorController extends Controller
             } else {
                 if ($relatorio != null) {
                     if ($notificacao != null) {
-                        $obj = (object) array(
-                            'data'             => $indice->data,
-                            'statusInspecao'   => $indice->status,
-                            'motivoInspecao'   => $indice->motivo,
-                            'inspetor_id'      => $indice->inspetor_id,
-                            'cnae'             => $indice->requerimento->cnae->descricao,
-                            'nomeEmpresa'      => $indice->empresa->nome,
+                        if ($indice->nome_empresa != null) {
+                            $obj = (object)array(
+                                'data' => $indice->data,
+                                'statusInspecao' => $indice->status,
+                                'motivoInspecao' => $indice->motivo,
+                                'inspetor_id' => $indice->inspetor_id,
+                                'cnae' => $indice->requerimento->cnae->descricao,
+                                'nomeEmpresa' => $indice->nome_empresa,
 
-                            'relatorio_id'     => $relatorio->id,
-                            'inspecao_id'      => $indice->id,
-                            'relatorio_status' => $relatorio->status,
-                            'notificacao_status' => $notificacao->status,
-                        );
+                                'relatorio_id' => $relatorio->id,
+                                'inspecao_id' => $indice->id,
+                                'relatorio_status' => $relatorio->status,
+                                'notificacao_status' => $notificacao->status,
+                            );
+                        } else {
+                            $obj = (object)array(
+                                'data' => $indice->data,
+                                'statusInspecao' => $indice->status,
+                                'motivoInspecao' => $indice->motivo,
+                                'inspetor_id' => $indice->inspetor_id,
+                                'cnae' => $indice->requerimento->cnae->descricao,
+                                'nomeEmpresa' => $indice->empresa->nome,
+
+                                'relatorio_id' => $relatorio->id,
+                                'inspecao_id' => $indice->id,
+                                'relatorio_status' => $relatorio->status,
+                                'notificacao_status' => $notificacao->status,
+                            );
+                        }
                         array_push($inspecoes, $obj);
                     } else {
-                        $obj = (object) array(
-                            'data'             => $indice->data,
-                            'statusInspecao'   => $indice->status,
-                            'motivoInspecao'   => $indice->motivo,
-                            'inspetor_id'      => $indice->inspetor_id,
-                            'cnae'             => $indice->requerimento->cnae->descricao,
-                            'nomeEmpresa'      => $indice->empresa->nome,
+                        if ($indice->nome_empresa != null) {
+                            $obj = (object)array(
+                                'data' => $indice->data,
+                                'statusInspecao' => $indice->status,
+                                'motivoInspecao' => $indice->motivo,
+                                'inspetor_id' => $indice->inspetor_id,
+                                'cnae' => $indice->requerimento->cnae->descricao,
+                                'nomeEmpresa' => $indice->nome_empresa,
 
-                            'relatorio_id'     => $relatorio->id,
-                            'inspecao_id'      => $indice->id,
-                            'relatorio_status' => $relatorio->status,
-                            'notificacao_status' => null,
-                        );
+                                'relatorio_id' => $relatorio->id,
+                                'inspecao_id' => $indice->id,
+                                'relatorio_status' => $relatorio->status,
+                                'notificacao_status' => null,
+                            );
+                        } else {
+                            $obj = (object)array(
+                                'data' => $indice->data,
+                                'statusInspecao' => $indice->status,
+                                'motivoInspecao' => $indice->motivo,
+                                'inspetor_id' => $indice->inspetor_id,
+                                'cnae' => $indice->requerimento->cnae->descricao,
+                                'nomeEmpresa' => $indice->empresa->nome,
+
+                                'relatorio_id' => $relatorio->id,
+                                'inspecao_id' => $indice->id,
+                                'relatorio_status' => $relatorio->status,
+                                'notificacao_status' => null,
+                            );
+                        }
                         array_push($inspecoes, $obj);
                     }
                 } else {
-                    $obj = (object) array(
-                        'data'             => $indice->data,
-                        'statusInspecao'   => $indice->status,
-                        'motivoInspecao'   => $indice->motivo,
-                        'inspetor_id'      => $indice->inspetor_id,
-                        'cnae'             => $indice->requerimento->cnae->descricao,
-                        'nomeEmpresa'      => $indice->empresa->nome,
+                    if ($indice->nome_empresa != null) {
+                        $obj = (object)array(
+                            'data' => $indice->data,
+                            'statusInspecao' => $indice->status,
+                            'motivoInspecao' => $indice->motivo,
+                            'inspetor_id' => $indice->inspetor_id,
+                            'cnae' => $indice->requerimento->cnae->descricao,
+                            'nomeEmpresa' => $indice->nome_empresa,
 
-                        'relatorio_id'     => null,
-                        'inspecao_id'      => $indice->id,
-                        'relatorio_status' => null,
-                        'notificacao_status' => null,
-                    );
+                            'relatorio_id' => null,
+                            'inspecao_id' => $indice->id,
+                            'relatorio_status' => null,
+                            'notificacao_status' => null,
+                        );
+                    } else {
+                        $obj = (object)array(
+                            'data' => $indice->data,
+                            'statusInspecao' => $indice->status,
+                            'motivoInspecao' => $indice->motivo,
+                            'inspetor_id' => $indice->inspetor_id,
+                            'cnae' => $indice->requerimento->cnae->descricao,
+                            'nomeEmpresa' => $indice->empresa->nome,
+
+                            'relatorio_id' => null,
+                            'inspecao_id' => $indice->id,
+                            'relatorio_status' => null,
+                            'notificacao_status' => null,
+                        );
+                    }
                     array_push($inspecoes, $obj);
                 }
             }
@@ -502,6 +551,7 @@ class InspetorController extends Controller
         $resultado = InspecaoFoto::where('inspecao_id', '=', Crypt::decrypt($request->value))->orderBy('created_at', 'ASC')->get();
         return view('inspetor/album_inspetor', ['album' => $resultado]);
     }
+
     /*
     * FUNCAO:  Deletar uma imagem
     * ENTRADA: inspecao_id, imagem_id
@@ -516,6 +566,7 @@ class InspetorController extends Controller
         unlink("imagens/inspecoes/" . $nomeDoArquivo);
         return redirect()->back()->with('success', "Foto deletada com sucesso!");
     }
+
     /*
     * FUNCAO: mostrar a pagina de relatorio
     * ENTRADA: inspecao_id
@@ -531,6 +582,7 @@ class InspetorController extends Controller
             return view('inspetor/relatorio_inspetor', ['album' => $resultado, 'inspetor_id' => Crypt::decrypt($request->value), 'relatorio' => $relatorio->relatorio, 'relatorio_status' => $request->relatorio_status]);
         }
     }
+
     /*
     * FUNCAO: mostrar a pagina de historico
     * ENTRADA:
@@ -542,6 +594,7 @@ class InspetorController extends Controller
         $inspecoes = Inspecao::where('inspetor_id', $inspetor->id)->where('status', 'concluido')->orderBy('data', 'ASC')->get();
         return view('inspetor/historico_inspetor', ['inspecoes' => $inspecoes]);
     }
+
     /*
     * FUNCAO: Add descricao a imagem
     * ENTRADA: inspecao_id, descricao
@@ -554,6 +607,7 @@ class InspetorController extends Controller
         $resultado->save();
         return redirect()->back()->with('success' . $resultado->id, "Comentário salvo com sucesso!");
     }
+
     /*
     * FUNCAO: salvar/atualizar o relatorio
     * ENTRADA: relatorio
@@ -568,8 +622,10 @@ class InspetorController extends Controller
             $atualizar = InspecaoRelatorio::where('inspecao_id', '=', $request->inspecao_id)->first();
             $atualizar->update(['relatorio' => $request->relatorio]);
             $atualizar->status = "avaliacao";
-            $atualizar->agente1 = "avaliacao";
-            $atualizar->agente2 = "avaliacao";
+            foreach ($atualizar->agentes as $agente) {
+                $agente->pivot->aprovacao = "avaliacao";
+                $agente->pivot->update();
+            }
             $atualizar->coordenador = "avaliacao";
             $atualizar->save();
             return redirect()->route('show.programacao')->with('success', "Relatório atualizado com sucesso e reenviado para nova análise dos avaliadores!");

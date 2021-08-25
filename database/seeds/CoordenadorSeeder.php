@@ -53,7 +53,7 @@ class CoordenadorSeeder extends Seeder
         //     'tipo' => 'mei',
         //     'user_id' => '3',
         // ]);
-        
+
         \App\Endereco::create([
             'rua' => 'Rivendell',
             'numero' => '888',
@@ -161,12 +161,12 @@ class CoordenadorSeeder extends Seeder
             'telefone' => '87981692110',
             'user_id' => '7',
         ]);
-        
+
         \App\CnaeEmpresa::create([ 'empresa_id' => '1', 'cnae_id' => '1' ]);
         \App\CnaeEmpresa::create([ 'empresa_id' => '1', 'cnae_id' => '50' ]);
         \App\CnaeEmpresa::create([ 'empresa_id' => '1', 'cnae_id' => '110' ]);
         // \App\CnaeEmpresa::create([ 'empresa_id' => '2', 'cnae_id' => '3' ]);
 
-        
+
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dispensa;
 use Illuminate\Http\Request;
 use App\Empresa;
 use App\User;
@@ -19,6 +20,7 @@ use App\Tipodocempresa;
 use App\Tipodocresp;
 use App\Inspecao;
 use App\Notificacao;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Auth;
 use DateTime;
@@ -59,7 +61,7 @@ class EmpresaController extends Controller
     public function home()
     {
         $countPendente = 0;
-        $countAnexado  = 0;
+        $countAnexado = 0;
 
         $empresa = Auth::user()->empresa;
         foreach ($empresa as $indice) {
@@ -68,7 +70,7 @@ class EmpresaController extends Controller
                 ->get();
             $countPendente = $countPendente + count($checklistPendente);
 
-            $checklistAnexado  = Checklistemp::where('empresa_id', $indice->id)
+            $checklistAnexado = Checklistemp::where('empresa_id', $indice->id)
                 ->where('anexado', 'true')
                 ->get();
             $countAnexado = $countAnexado + count($checklistAnexado);
@@ -91,9 +93,9 @@ class EmpresaController extends Controller
         return view(
             'empresa.home_empresa',
             [
-                "empresas"         => $empresa,
-                'anexados'         => $countAnexado,
-                'pendentes'        => $countPendente,
+                "empresas" => $empresa,
+                'anexados' => $countAnexado,
+                'pendentes' => $countPendente,
                 'totalNotificacao' => $totalNotificacao,
             ]
         );
@@ -113,7 +115,7 @@ class EmpresaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -127,28 +129,29 @@ class EmpresaController extends Controller
         }
 
         $messages = [
-            'unique'   => 'Um campo igual a :attribute já está cadastrado no sistema!',
+            'unique' => 'Um campo igual a :attribute já está cadastrado no sistema!',
             'required' => 'O campo :attribute não foi passado!',
-            'string'   => 'O campo :attribute deve ser texto!',
+            'string' => 'O campo :attribute deve ser texto!',
         ];
 
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string',
-            'email'    => 'required|email|unique:users,email',
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'nome'     => 'required|string',
-            'cnpjcpf'  => 'required|string|unique:empresas,cnpjcpf',
-            'tipo'     => 'required|string',
+            'nome' => 'required|string',
+            'nome_fantasia' => 'nullable|string',
+            'cnpjcpf' => 'required|string|unique:empresas,cnpjcpf',
+            'tipo' => 'required|string',
             'emailEmpresa' => 'nullable|email|unique:empresas,email',
             'telefone1' => 'required|string',
             'telefone2' => 'nullable|string',
-            'rua'      => 'required|string',
+            'rua' => 'required|string',
             'numero' => 'required|string',
-            'bairro'   => 'required|string',
-            'cidade'   => 'required|string',
+            'bairro' => 'required|string',
+            'cidade' => 'required|string',
             'complemento' => 'nullable|string',
-            'uf'       => 'required|string',
-            'cep'      => 'required|string',
+            'uf' => 'required|string',
+            'cep' => 'required|string',
         ], $messages);
 
 
@@ -172,6 +175,7 @@ class EmpresaController extends Controller
 
         $empresa = Empresa::create([
             'nome' => $request->nome,
+            'nome_fantasia' => $request->nome_fantasia,
             'email' => $request->emailEmpresa,
             'cnpjcpf' => $request->cnpjcpf,
             'status_inspecao' => "pendente",
@@ -245,10 +249,10 @@ class EmpresaController extends Controller
                 // ->first();
 
                 $cnaeEmpresa = Checklistemp::create([
-                    'anexado'  => 'false',
+                    'anexado' => 'false',
                     'areas_id' => $areasOrdenado[$i],
                     'num_cnae' => $areas_cont_ordenado[$i],
-                    'nomeDoc'  => $indice->tipodocemp->nome,
+                    'nomeDoc' => $indice->tipodocemp->nome,
                     'tipodocemp_id' => $indice->tipodocemp->id,
                     'empresa_id' => $empresa->id,
                 ]);
@@ -258,6 +262,7 @@ class EmpresaController extends Controller
 
         return redirect()->route('confirma.cadastro');
     }
+
     /*
     *   FUNCAO: abrir a pagina editar_meus_dados
     *   TELA: empresa/editar_meus_dados
@@ -268,6 +273,7 @@ class EmpresaController extends Controller
         $user = Auth::user();
         return view('empresa/editar_meus_dados', ["nome" => $user->name, "email" => $user->email]);
     }
+
     /*
     *   FUNCAO: atualizar o nome do usuario
     *   REQUEST: name
@@ -276,13 +282,14 @@ class EmpresaController extends Controller
     public function atualizarMeusDados(Request $request)
     {
         $validator = $request->validate([
-            'name'     => 'required|string',
+            'name' => 'required|string',
         ]);
         $user = Auth::user();
         $user->name = $request->name;
         $user->save();
         return redirect()->route('editar.gerente')->with('success', "Nome do usuário alterado com sucesso!");
     }
+
     /*
     *   FUNCAO: atualizar senha de acesso do gerente
     *   REQUEST: senhaAtual, novaSenha1, novaSenha2
@@ -311,24 +318,25 @@ class EmpresaController extends Controller
         }
 
         $messages = [
-            'unique'   => 'Um campo igual a :attribute já está cadastrado no sistema!',
+            'unique' => 'Um campo igual a :attribute já está cadastrado no sistema!',
             'required' => 'O campo :attribute não foi passado!',
-            'string'   => 'O campo :attribute deve ser texto!',
+            'string' => 'O campo :attribute deve ser texto!',
         ];
 
         $validator = Validator::make($request->all(), [
-            'nome'     => 'required|string',
-            'cnpjcpf'  => 'required|string|unique:empresas,cnpjcpf',
-            'tipo'     => 'required|string',
-            'email'    => 'nullable|email',
+            'nome' => 'required|string',
+            'nome_fantasia' => 'nullable|string',
+            'cnpjcpf' => 'required|string|unique:empresas,cnpjcpf',
+            'tipo' => 'required|string',
+            'email' => 'nullable|email',
             'telefone1' => 'required|string',
             'telefone2' => 'nullable|string',
-            'rua'      => 'required|string',
+            'rua' => 'required|string',
             'numero' => 'required|string',
-            'bairro'   => 'required|string',
-            'cidade'   => 'required|string',
-            'uf'       => 'required|string',
-            'cep'      => 'required|string',
+            'bairro' => 'required|string',
+            'cidade' => 'required|string',
+            'uf' => 'required|string',
+            'cep' => 'required|string',
             'complemento' => 'nullable|string',
         ], $messages);
 
@@ -340,6 +348,7 @@ class EmpresaController extends Controller
 
         $empresa = Empresa::create([
             'nome' => $request->nome,
+            'nome_fantasia' => $request->nome_fantasia,
             'email' => $request->emailEmpresa,
             'cnpjcpf' => $request->cnpjcpf,
             'status_inspecao' => "pendente",
@@ -460,10 +469,18 @@ class EmpresaController extends Controller
         // $docs         = Docresptec::where('resptecnicos_id', $request->idRespTecnico)->delete();
         // $checklist    = Checklistresp::where('resptecnicos_id', $request->idRespTecnico)->delete();
 
-        $rtempresa       = RtEmpresa::where('empresa_id', $request->idEmpresa)
+        $rtempresa = RtEmpresa::where('empresa_id', $request->idEmpresa)
             ->where('resptec_id', $request->idRespTecnico)
             ->where('area_id', $request->idArea)
             ->delete();
+
+        $respTecnico = RespTecnico::where('id', '=', $request->idRespTecnico)->first();
+        $empresa = Empresa::find($request->idEmpresa)->first();
+        $coords = User::where('tipo', '=', 'coordenador')->get();
+        foreach ($coords as $coord) {
+            \Illuminate\Support\Facades\Mail::send(new \App\Mail\SaidaRT($coord, $respTecnico, $empresa));
+        }
+
 
         // $respTecnico  = RespTecnico::find($request->idRespTecnico);
         // $user         = User::find($respTecnico->user_id);
@@ -481,7 +498,7 @@ class EmpresaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
@@ -520,25 +537,100 @@ class EmpresaController extends Controller
         return view('coordenador/show_empresa_coordenador', ['empresa' => $empresa, 'endereco' => $endereco, 'telefone' => $telefone, 'cnae' => $cnaeEmpresa, 'rt' => $resptecnicos]);
     }
 
+    public static function download($id_dispensa)
+    {
+        $arquivo = Dispensa::find($id_dispensa);
+        return response()->download(public_path('/dispensas/' . $arquivo->cnpj));
+    }
+
+    public function dispensa(Request $request){
+        $empresa = Empresa::find($request->empresa);
+        return view('dispensa.dispensaCNAE', [
+            'empresa' => $empresa,
+            'cnae' => $request->cnae,
+            'resptecnico' => $request->resptecnico,
+        ]);
+
+    }
+
+    public function solicitarDispensa(Request $request)
+    {
+
+        $messages = [
+            'max' => 'O tamanho máximo do arquivo deve ser de 5mb!',
+            'required' => 'O campo :attribute não foi passado!',
+            'mimes' => 'O arquivo anexado não está no formato pdf!',
+            'file' => 'Um arquivo deve ser anexado!',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'cnpj' => 'required|file|mimes:pdf|max:5000',
+            'dispensa' => 'required',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator);
+        }
+
+        $empresa = Empresa::find($request->empresa);
+        $data = date('Y-m-d');
+
+        $requerimento = Requerimento::create([
+            'tipo' => "Dispensa CNAE",
+            'status' => "pendente",
+            'aviso' => "",
+            'cnae_id' => $request->cnae,
+            'data' => $data,
+            'resptecnicos_id' => $request->resptecnico,
+            'empresas_id' => $request->empresa,
+        ]);
+
+        if ($request->hasfile('cnpj')) {
+            $file = $request->file('cnpj');
+            $name = preg_replace("/[^a-zA-Z0-9]+/", "", 'dispensaCNAE') . '-' . time() . '.' . $file->extension();
+            $extensao = $file->extension();
+            $file->move(public_path() . '/dispensas/', $name);
+
+        }
+
+        $dispensa = new Dispensa();
+        $dispensa->cnpj = $name;
+        $dispensa->dispensa = $request->dispensa;
+        $dispensa->requerimento_id = $requerimento->id;
+        $dispensa->save();
+
+        session()->flash('success', 'A sua solicitação foi enviada para análise!');
+        if ($request->resptecnico != null) {
+            return redirect(route('criar.requerimento', ['empresa' => Crypt::encrypt($request->empresa)]));
+        } else {
+            return redirect(route('mostrar.requerimentos', ["value" => Crypt::encrypt($empresa->id)]));
+        }
+    }
+
     public function cadastrarRequerimento(Request $request)
     {
         $validator = $request->validate([
-            'tipo'     => 'required',
-            'cnae'    => 'required',
+            'tipo' => 'required',
+            'cnae' => 'required',
         ]);
 
         $empresa = Empresa::find($request->empresa);
 
         $data = date('Y-m-d');
 
+        if ($request->tipo == "Dispensa CNAE") {
+            return Redirect::route('solicitar.dispensa', ['empresa' => $empresa, 'cnae' => $request->cnae]);
+        }
+
         $requerimento = Requerimento::create([
-            'tipo'            => $request->tipo,
-            'status'          => "pendente",
-            'aviso'           => "",
-            'cnae_id'         => $request->cnae,
-            'data'            => $data,
+            'tipo' => $request->tipo,
+            'status' => "pendente",
+            'aviso' => "",
+            'cnae_id' => $request->cnae,
+            'data' => $data,
             'resptecnicos_id' => $request->resptecnico,
-            'empresas_id'     => $request->empresa,
+            'empresas_id' => $request->empresa,
         ]);
 
         session()->flash('success', 'O seu requerimento foi enviado para análise!');
@@ -590,30 +682,30 @@ class EmpresaController extends Controller
             }
 
             if ($pendencia == "completo") {
-                $obj = (object) array(
-                    'area'      => $key,
-                    'status'    => "completo",
+                $obj = (object)array(
+                    'area' => $key,
+                    'status' => "completo",
                 );
                 array_push($check, $obj);
             } else {
-                $obj = (object) array(
-                    'area'      => $key,
-                    'status'    => "pendente",
+                $obj = (object)array(
+                    'area' => $key,
+                    'status' => "pendente",
                 );
                 array_push($check, $obj);
             }
         }
 
         return view('empresa/requerimento_empresa', [
-            'nome'              => $empresa->nome,
-            'cnaes'             => $cnaes,
+            'nome' => $empresa->nome,
+            'cnaes' => $cnaes,
             // 'resptecnico'       => $rt->id,
-            'empresas'          => $resultado,
-            'status'            => $empresa->status_cadastro,
-            'requerimentos'     => $requerimentos,
+            'empresas' => $resultado,
+            'status' => $empresa->status_cadastro,
+            'requerimentos' => $requerimentos,
             // 'resultados'        => $arrayResultado,
-            'check'             => $check,
-            'areas'             => $areas,
+            'check' => $check,
+            'areas' => $areas,
         ]);
     }
 
@@ -635,19 +727,19 @@ class EmpresaController extends Controller
                 if ($key2->anexado == "false") {
 
                     // Criando uma lista de documentos que faltam ou não anexar
-                    $docsPendencia = (object) array(
-                        'area'      => $key,
-                        'status'    => "false",
-                        'nome'      => $key2->nomeDoc,
+                    $docsPendencia = (object)array(
+                        'area' => $key,
+                        'status' => "false",
+                        'nome' => $key2->nomeDoc,
                     );
                     array_push($pendenciaDocs, $docsPendencia);
                 } else {
 
                     // Criando uma lista de documentos que faltam ou não anexar
-                    $docsPendencia = (object) array(
-                        'area'      => $key,
-                        'status'    => "true",
-                        'nome'      => $key2->nomeDoc,
+                    $docsPendencia = (object)array(
+                        'area' => $key,
+                        'status' => "true",
+                        'nome' => $key2->nomeDoc,
                     );
                     array_push($pendenciaDocs, $docsPendencia);
                 }
@@ -657,9 +749,9 @@ class EmpresaController extends Controller
         foreach ($request->areas as $indice) {
             $area = Area::find($indice);
 
-            $obj = (object) array(
-                'areaId'      => strval($area->id),
-                'areaNome'    => $area->nome,
+            $obj = (object)array(
+                'areaId' => strval($area->id),
+                'areaNome' => $area->nome,
             );
 
             array_push($areas, $obj);
@@ -704,13 +796,13 @@ class EmpresaController extends Controller
         //         if ($indice->inspecao->denuncia->empresa_id == $empresa->id) {
         //             array_push($notificacoes, $indice);
         //         }
-        //     }       
+        //     }
         // }
-        // dd($inspecoes); 
+        // dd($inspecoes);
 
         return view('empresa/notificacao', [
-            'inspecoes'    => $inspecao,
-            'empresa'      => $empresa,
+            'inspecoes' => $inspecao,
+            'empresa' => $empresa,
         ]);
     }
 
@@ -741,7 +833,7 @@ class EmpresaController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function editarEmpresa(Request $request)
@@ -753,18 +845,19 @@ class EmpresaController extends Controller
         $endereco = Endereco::where('empresa_id', $empresa->id)->first();
 
         $validator = $request->validate([
-            'nome'     => 'nullable|string',
-            'cnpjcpf'  => 'nullable|string',
-            'tipo'     => 'nullable|string',
-            'telefone1'  => 'nullable|string',
-            'telefone2'  => 'nullable|string',
-            'rua'      => 'nullable|string',
-            'numero'   => 'nullable|string',
-            'bairro'   => 'nullable|string',
-            'cidade'   => 'nullable|string',
-            'uf'       => 'nullable|string',
-            'cep'      => 'nullable|string',
-            'complemento'  => 'nullable|string',
+            'nome' => 'nullable|string',
+            'nome_fantasia' => 'nullable|string',
+            'cnpjcpf' => 'nullable|string',
+            'tipo' => 'nullable|string',
+            'telefone1' => 'nullable|string',
+            'telefone2' => 'nullable|string',
+            'rua' => 'nullable|string',
+            'numero' => 'nullable|string',
+            'bairro' => 'nullable|string',
+            'cidade' => 'nullable|string',
+            'uf' => 'nullable|string',
+            'cep' => 'nullable|string',
+            'complemento' => 'nullable|string',
         ]);
 
         if ($request['cnae'] == null) {
@@ -781,20 +874,21 @@ class EmpresaController extends Controller
         }
 
         $empresa->cnpjcpf = $request->cnpjcpf;
-        $empresa->tipo    = $request->tipo;
-        $empresa->nome    = $request->nome;
+        $empresa->tipo = $request->tipo;
+        $empresa->nome = $request->nome;
+        $empresa->nome_fantasia = $request->nome_fantasia;
         $empresa->save();
 
         $telefone->telefone1 = $request->telefone1;
         $telefone->telefone2 = $request->telefone2;
         $telefone->save();
 
-        $endereco->rua         = $request->rua;
-        $endereco->numero      = $request->numero;
-        $endereco->bairro      = $request->bairro;
-        $endereco->cidade      = $request->cidade;
-        $endereco->uf          = $request->uf;
-        $endereco->cep         = $request->cep;
+        $endereco->rua = $request->rua;
+        $endereco->numero = $request->numero;
+        $endereco->bairro = $request->bairro;
+        $endereco->cidade = $request->cidade;
+        $endereco->uf = $request->uf;
+        $endereco->cep = $request->cep;
         $endereco->complemento = $request->complemento;
 
         $endereco->save();
@@ -826,8 +920,7 @@ class EmpresaController extends Controller
                         'empresa_id' => $empresa->id,
                         'cnae_id' => $cnae[$i],
                     ]);
-                }
-                // Caso não, cria a checklist dessa nova área que antes não havia, para esta empresa
+                } // Caso não, cria a checklist dessa nova área que antes não havia, para esta empresa
                 else {
                     $areatipodocemp = AreaTipodocemp::where('area_id', $cnaeTemp->areas_id)->get();
 
@@ -839,10 +932,10 @@ class EmpresaController extends Controller
                         // ->first();
 
                         $cnaeEmpresa = Checklistemp::create([
-                            'anexado'  => 'false',
+                            'anexado' => 'false',
                             'areas_id' => $cnaeTemp->areas_id,
                             'num_cnae' => 1,
-                            'nomeDoc'  => $indice->tipodocemp->nome,
+                            'nomeDoc' => $indice->tipodocemp->nome,
                             'tipodocemp_id' => $indice->tipodocemp->id,
                             'empresa_id' => $request->empresaId,
                         ]);
@@ -917,8 +1010,8 @@ class EmpresaController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function listarArquivos($id)
@@ -939,15 +1032,15 @@ class EmpresaController extends Controller
 
         if ($requerimento == null) {
             $data = array(
-                'tipo'    => "nenhum",
-                'valor'   => "nenhum",
+                'tipo' => "nenhum",
+                'valor' => "nenhum",
             );
 
             echo json_encode($data);
         } else {
             $data = array(
-                'tipo'    => $requerimento->tipo,
-                'valor'   => $requerimento->status,
+                'tipo' => $requerimento->tipo,
+                'valor' => $requerimento->status,
             );
 
             echo json_encode($data);
@@ -960,8 +1053,8 @@ class EmpresaController extends Controller
         $docempresa = Docempresa::find($request->id);
 
         $data = array(
-            'nome'          => $docempresa->nome,
-            'data_emissao'  => $docempresa->data_emissao,
+            'nome' => $docempresa->nome,
+            'data_emissao' => $docempresa->data_emissao,
             'data_validade' => $docempresa->data_validade,
         );
 
@@ -1032,18 +1125,18 @@ class EmpresaController extends Controller
     {
 
         $messages = [
-            'max'      => 'O tamanho máximo do arquivo deve ser de 5mb!',
+            'max' => 'O tamanho máximo do arquivo deve ser de 5mb!',
             'required' => 'O campo :attribute não foi passado!',
-            'mimes'    => 'O arquivo anexado não está no formato pdf!',
-            'date'     => 'Campo data está inválido!',
-            'file'     => 'Um arquivo deve ser anexado!',
+            'mimes' => 'O arquivo anexado não está no formato pdf!',
+            'date' => 'Campo data está inválido!',
+            'file' => 'Um arquivo deve ser anexado!',
         ];
 
         $validator = Validator::make($request->all(), [
-            'arquivo'        => 'required|file|mimes:pdf|max:5000',
+            'arquivo' => 'required|file|mimes:pdf|max:5000',
             'tipodocempresa' => 'required',
-            'data_emissao'   => 'required|date',
-            'data_validade'  => 'nullable|date',
+            'data_emissao' => 'required|date',
+            'data_validade' => 'nullable|date',
         ], $messages);
 
 
@@ -1114,11 +1207,11 @@ class EmpresaController extends Controller
         Storage::putFileAs($pathDocemp, $fileDocemp, $nomeDocemp);
 
         $docEmpresa = Docempresa::create([
-            'nome'  => $pathDocemp . $nomeDocemp,
-            'area'  => $request->area,
-            'data_emissao'  => $request->data_emissao,
+            'nome' => $pathDocemp . $nomeDocemp,
+            'area' => $request->area,
+            'data_emissao' => $request->data_emissao,
             'data_validade' => $request->data_validade,
-            'empresa_id'  => $empresa->id,
+            'empresa_id' => $empresa->id,
             'tipodocemp_id' => $request->tipodocempresa,
         ]);
 
@@ -1131,24 +1224,26 @@ class EmpresaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         //
     }
+
     public function paginaCadastrarEmpresa()
     {
         // dd("opa");
         $areas = Area::orderBy('nome', 'ASC')->get();
         return view('empresa/cadastrar_empresa', ['areas' => $areas]);
     }
+
     /**
      * Funcao: Redireciona o dono do estabelecimento para a tela de perfil do estabelecimento
      * View de destino: empresa/show_empresa.blade.php
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function showEmpresa(Request $request)
@@ -1171,12 +1266,12 @@ class EmpresaController extends Controller
 
         return view('empresa/show_empresa', [
             'empresa' => $empresa,
-            'endereco'         => $endereco,
-            'telefone'         => $telefone,
-            'cnae'             => $cnaeEmpresa,
-            'respTecnico'      => $temp,
-            'empresaId'        => $empresa->id,
-            'empresa_status'   => $empresa->status_cadastro,
+            'endereco' => $endereco,
+            'telefone' => $telefone,
+            'cnae' => $cnaeEmpresa,
+            'respTecnico' => $temp,
+            'empresaId' => $empresa->id,
+            'empresa_status' => $empresa->status_cadastro,
         ]);
     }
 
@@ -1227,8 +1322,8 @@ class EmpresaController extends Controller
 
         return view('empresa/documentos_rt', [
             'checklist' => $checkrespt,
-            'tipodocs'  => $tipodocresp,
-            'docsrt'    => $docsrt,
+            'tipodocs' => $tipodocresp,
+            'docsrt' => $docsrt,
         ]);
     }
 
@@ -1295,10 +1390,12 @@ class EmpresaController extends Controller
             'tipos' => $tipos
         ]);
     }
+
     public function ajaxCnaes(Request $request)
     {
         $this->listar($request->id_area);
     }
+
     public function listar($idArea)
     {
         $resultado = Cnae::where('areas_id', '=', $idArea)->orderBy('descricao', 'ASC')->get();
@@ -1330,11 +1427,12 @@ class EmpresaController extends Controller
                     ';
         }
         $data = array(
-            'success'   => true,
+            'success' => true,
             'table_data' => $output,
         );
         echo json_encode($data);
     }
+
     /*
     * Função para add cnae
     * Tela: editar_empresa.blade
@@ -1343,6 +1441,7 @@ class EmpresaController extends Controller
     {
         $this->listarCnae_editarEmpresa($request->id_area);
     }
+
     public function listarCnae_editarEmpresa($idArea)
     {
         $resultado = Cnae::where('areas_id', '=', $idArea)->orderBy('descricao', 'ASC')->get();
@@ -1374,7 +1473,7 @@ class EmpresaController extends Controller
                     ';
         }
         $data = array(
-            'success'   => true,
+            'success' => true,
             'table_data' => $output,
             // 'arrayTemp' => $arrayTemp, //atualizar o array temp
         );
@@ -1390,13 +1489,13 @@ class EmpresaController extends Controller
 
         if ($requerimento == null) {
             $data = array(
-                'success'  => false,
+                'success' => false,
             );
             echo json_encode($data);
         } elseif ($requerimento->status == "pendente") {
 
             $data = array(
-                'success'  => true,
+                'success' => true,
             );
             echo json_encode($data);
         } elseif ($requerimento->status == "aprovado") {
@@ -1404,30 +1503,30 @@ class EmpresaController extends Controller
 
             if ($inspecao == null) {
                 $data = array(
-                    'success'  => false,
+                    'success' => false,
                 );
                 echo json_encode($data);
             } else {
                 if ($inspecao->status == "aprovado") {
                     $data = array(
-                        'success'  => false,
+                        'success' => false,
                     );
                     echo json_encode($data);
                 } elseif ($inspecao->status == "reprovado") {
                     $data = array(
-                        'success'  => false,
+                        'success' => false,
                     );
                     echo json_encode($data);
                 } else {
                     $data = array(
-                        'success'  => true,
+                        'success' => true,
                     );
                     echo json_encode($data);
                 }
             }
         } elseif ($requerimento->status == "reprovado") {
             $data = array(
-                'success'  => false,
+                'success' => false,
             );
             echo json_encode($data);
         }
@@ -1443,6 +1542,7 @@ class EmpresaController extends Controller
 
         $this->listarCnaes($request->id_empresa);
     }
+
     public function listarCnaes($idEmpresa)
     {
         $resultado = CnaeEmpresa::where('empresa_id', $idEmpresa)->get();
@@ -1475,7 +1575,7 @@ class EmpresaController extends Controller
                 ';
         }
         $data = array(
-            'success'   => true,
+            'success' => true,
             'table_data' => $output,
             'arrayTemp' => $arrayTemp, //atualizar o array temp
         );
@@ -1509,7 +1609,7 @@ class EmpresaController extends Controller
                 ->where('area', $area)->delete();
 
             $data = array(
-                'valor'   => "Área Removida",
+                'valor' => "Área Removida",
             );
             echo json_encode($data);
         } elseif ($checklist->num_cnae > 1) {
@@ -1521,11 +1621,10 @@ class EmpresaController extends Controller
             $delete = CnaeEmpresa::destroy($request->idCnaeEmp);
 
             $data = array(
-                'valor'   => "Valor decrementado",
+                'valor' => "Valor decrementado",
             );
             echo json_encode($data);
         }
-
 
 
         // $data = array(
@@ -1541,9 +1640,9 @@ class EmpresaController extends Controller
         $checklist = Checklistemp::find($request->checklistId);
 
         $data = array(
-            'success'   => true,
+            'success' => true,
             'checklist' => $checklist->id,
-            'empresa'   => $empresa->id,
+            'empresa' => $empresa->id,
         );
         return $data;
     }
@@ -1559,8 +1658,8 @@ class EmpresaController extends Controller
         $endereco = Endereco::where('empresa_id', $empresa->id)->first();
 
         $data = array(
-            'nome'       => $empresa->nome,
-            'endereco'   => $endereco->rua . ' ' . $endereco->numero . ' ' . $endereco->bairro,
+            'nome' => $empresa->nome,
+            'endereco' => $endereco->rua . ' ' . $endereco->numero . ' ' . $endereco->bairro,
         );
 
         echo json_encode($data);

@@ -54,6 +54,10 @@
                             <span style="color:#707070">{{$empresa->nome}}</span>
                         </div>
                         <div class="form col-md-12" style="margin-top:-10px;">
+                            <label style="font-weight:normal;font-family: 'Roboto', sans-serif;">Nome de Fantasia: </label>
+                            <span style="color:#707070">{{$empresa->nome_fantasia}}</span>
+                        </div>
+                        <div class="form col-md-12" style="margin-top:-10px;">
                             <label style="font-weight:normal;font-family: 'Roboto', sans-serif;">CNPJ: </label>
                             <span style="color:#707070">{{$empresa->cnpjcpf}}</span>
                         </div>

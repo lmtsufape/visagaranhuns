@@ -24,7 +24,7 @@
         @csrf
         <div class="barraMenu" style="margin-top:2rem; margin-bottom:4rem;padding:15px;">
                 <div class="container" style="margin-top:1rem;">
-                    
+
                     @if ($message = Session::get('error'))
                             <div class="alert alert-warning alert-block fade show">
                                 <button type="button" class="close" data-dismiss="alert">×</button>
@@ -37,7 +37,7 @@
                                 <strong>{{$message}}</strong>
                             </div>
                     @endif
-                    
+
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <div class="form-row">
@@ -59,16 +59,25 @@
                                     <input type="text" class="styleInputCadastro" name="cpf" id="cpf" placeholder="" required>
                                 </div>
                                 <div class="form-group col-md-4" style="padding-right:15px;">
+                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Telefone:<span style="color:red">*</span></label>
+                                    <input type="text" class="styleInputCadastro" name="telefone" placeholder=""
+                                           onkeypress="mask(this, mphone);" onblur="mask(this, mphone);" required>
+                                </div>
+                                <div class="form-group col-md-4" style="padding-right:15px;">
+                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Conselho:<span style="color:red">*</span></label>
+                                    <input type="text" maxlength="5" class="styleInputCadastro" name="conselho" placeholder="" required>
+                                </div>
+                                <div class="form-group col-md-4" style="padding-right:15px;">
+                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Número do Conselho/Registro:<span style="color:red">*</span></label>
+                                    <input type="text" maxlength="6" class="styleInputCadastro" name="num_conselho" placeholder="" required>
+                                </div>
+                                <div class="form-group col-md-4" style="padding-right:15px;">
                                     <label class="styleTituloDoInputCadastro" for="inputPassword4">Formação:<span style="color:red">*</span></label>
                                     <input type="text" class="styleInputCadastro" name="formacao" placeholder="" required>
                                 </div>
                                 <div class="form-group col-md-4" style="padding-right:15px;">
-                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Especialização:<span style="color:red">*</span></label>
-                                    <input type="text" class="styleInputCadastro" name="especializacao" placeholder="" required>
-                                </div>
-                                <div class="form-group col-md-4" style="padding-right:15px;">
-                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Telefone:<span style="color:red">*</span></label>
-                                    <input type="text" class="styleInputCadastro" name="telefone" placeholder="" required>
+                                    <label class="styleTituloDoInputCadastro" for="inputPassword4">Especialização:</label>
+                                    <input type="text" class="styleInputCadastro" name="especializacao" placeholder="">
                                 </div>
                             </div>
                         </div>
@@ -84,7 +93,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4" style="padding-right:15px;">
-                            <input type="number" class="styleInputCadastro" name="senha" id="senha" placeholder="" required>
+                            <input type="password" class="styleInputCadastro" name="senha" id="senha" placeholder="" required>
                         </div>
                     </div>
                     <hr size = 7>
@@ -107,20 +116,46 @@
 </div>
 
 <script type="text/javascript">
+    function mask(o, f) {
+        setTimeout(function() {
+            var v = mphone(o.value);
+            if (v != o.value) {
+                o.value = v;
+            }
+        }, 1);
+    }
+
+    function mphone(v) {
+        var r = v.replace(/\D/g, "");
+        r = r.replace(/^0/, "");
+        if (r.length > 10) {
+            r = r.replace(/^(\d\d)(\d{5})(\d{4}).*/, "($1)$2-$3");
+        } else if (r.length > 5) {
+            r = r.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, "($1)$2-$3");
+        } else if (r.length > 2) {
+            r = r.replace(/^(\d\d)(\d{0,5})/, "($1)$2");
+        } else {
+            r = r.replace(/^(\d*)/, "($1");
+        }
+        return r;
+    }
+</script>
+
+<script type="text/javascript">
 
     window.onload= function() {
 
         $('#cpf').blur(function(){
-            console.log("FARL!");    
+            console.log("FARL!");
             // O CPF ou CNPJ
             var cpf_cnpj = $(this).val();
-            
+
             // Testa a validação e formata se estiver OK
             if ( formata_cpf_cnpj( cpf_cnpj ) ) {
                 $(this).val( formata_cpf_cnpj( cpf_cnpj ) );
             } else {
                 alert('CPF ou CNPJ inválido!');
-            }    
+            }
         });
     };
 

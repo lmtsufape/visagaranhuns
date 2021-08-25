@@ -67,16 +67,24 @@
                                         <input type="text" id="cpf" class="styleInputCadastro" name="cpf" value="{{$respTecnico->cpf}}" required maxlength="11">
                                     </div>
                                     <div class="form-group col-md-4"  style="padding-right:15px;">
+                                        <label class="styleTituloDoInputCadastro" for="inputTelefone1">Telefone:<span style="color:red">*</span></label>
+                                        <input type="text" class="styleInputCadastro" name="telefone" id="inputTelefone1" value="{{$respTecnico->telefone}}" required maxlength="11">
+                                    </div>
+                                    <div class="form-group col-md-4" style="padding-right:15px;">
+                                        <label class="styleTituloDoInputCadastro" for="inputPassword4">Conselho:<span style="color:red">*</span></label>
+                                        <input type="text" maxlength="5" class="styleInputCadastro" name="conselho" placeholder="" value="{{$respTecnico->conselho}}" required>
+                                    </div>
+                                    <div class="form-group col-md-4" style="padding-right:15px;">
+                                        <label class="styleTituloDoInputCadastro" for="inputPassword4">Número do Conselho/Registro:<span style="color:red">*</span></label>
+                                        <input type="text" maxlength="6" class="styleInputCadastro" name="num_conselho" placeholder="" value="{{$respTecnico->num_conselho}}" required>
+                                    </div>
+                                    <div class="form-group col-md-4"  style="padding-right:15px;">
                                         <label class="styleTituloDoInputCadastro" for="formacao">Formação:<span style="color:red">*</span></label>
                                         <input type="text" id="formacao" class="styleInputCadastro" name="formacao" value="{{$respTecnico->formacao}}" required>
                                     </div>
                                     <div class="form-group col-md-4"  style="padding-right:15px;">
                                         <label class="styleTituloDoInputCadastro" for="especializacao">Especialização:<span style="color:red">*</span></label>
                                         <input type="text" id="especializacao" class="styleInputCadastro" name="especializacao" value="{{$respTecnico->especializacao}}" required>
-                                    </div>
-                                    <div class="form-group col-md-4"  style="padding-right:15px;">
-                                        <label class="styleTituloDoInputCadastro" for="inputTelefone1">Telefone:<span style="color:red">*</span></label>
-                                        <input type="text" class="styleInputCadastro" name="telefone" id="inputTelefone1" value="{{$respTecnico->telefone}}" required maxlength="11">
                                     </div>
                                 </div>
                             <hr size = 7>

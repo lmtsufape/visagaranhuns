@@ -11,6 +11,7 @@ class CnaeSeeder extends Seeder
      */
     public function run()
     {
+        \App\Cnae::create([ 'codigo' => '1', 'descricao' => 'Indefinido', 'areas_id' => null]);
         \App\Cnae::create([ 'codigo' => '8511200', 'descricao' => 'Educação infantil – creche', 'areas_id' => '1']);
         \App\Cnae::create([ 'codigo' => '8512100', 'descricao' => 'Educação infantil – pré-escola', 'areas_id' => '1']);
         \App\Cnae::create([ 'codigo' => '8513900', 'descricao' => 'Ensino fundamental', 'areas_id' => '1']);

@@ -19,6 +19,10 @@ class CreateInspecoesTable extends Migration
             $table->string('status');
             $table->string('motivo');
 
+            $table->string('nome_empresa')->nullable();
+            $table->string('endereco')->nullable();
+            $table->string('cpfcnpj')->nullable();
+
             $table->bigInteger("inspetor_id")->nullable();
             $table->foreign("inspetor_id")->references("id")->on("inspetor");
 

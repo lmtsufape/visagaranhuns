@@ -19,6 +19,8 @@ class CreateResptecnicosTable extends Migration
             $table->string('especializacao')->nullable();
             $table->string('cpf')->unique();
             $table->string('telefone');
+            $table->string('conselho');
+            $table->string('num_conselho');
 
             $table->bigInteger("user_id")->nullable();
             $table->foreign("user_id")->references("id")->on("users");

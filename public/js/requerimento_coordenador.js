@@ -65,6 +65,15 @@ window.licencaAvaliacao = function($empresaId, $area, $requerimento) {
     document.getElementById("licenca").submit();
 }
 
+window.dispensaAvaliacao = function($empresaId, $area, $requerimento) {
+    console.log($empresaId);
+    console.log($area);
+    document.getElementById("licencaAvaliacao2").value = $empresaId;
+    document.getElementById("areaCnae2").value = $area;
+    document.getElementById("requerimento2").value = $requerimento;
+    document.getElementById("dispensa").submit();
+}
+
 // var arrayTemp = [];
 
 // window.addRequerimento = function($id) {

@@ -127,7 +127,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <div class="form-row">
-                                    
+
                                     <div class="btn-group col-md-12">
                                         <div class="col-md-12 styleTituloDoInputCadastro" style="margin-left:-15px;margin-right:30px;margin-bottom:10px;">Requerimentos Aprovados ou Denúncias</div>
                                         <div class="col-md-12 input-group input-group-sm mb-2">
@@ -211,7 +211,7 @@
                     var elemento = document.getElementById($id).innerText;
                     linha = montarLinhaInputRequerimento($id,elemento, response.tipo, response.cnae);
                     $('#adicionar').append(linha);
-                    arrayTemp.push($id);     
+                    arrayTemp.push($id);
                 }
             });
         }
@@ -238,7 +238,7 @@
             //         var elemento = document.getElementById($id).innerText;
             //         linha = montarLinhaInputRequerimento($id,elemento, response.tipo, response.cnae);
             //         $('#adicionar').append(linha);
-            //         arrayTemp.push($id);     
+            //         arrayTemp.push($id);
             //     }
             // });
         }
@@ -316,14 +316,14 @@
         var selectsAgentes = document.getElementsByClassName('agentes');
 
         for(var i = 0; i < selectsAgentes.length; i++) {
-            
+
             var optionSelecionadoTemp = selectsAgentes[i].options[selectsAgentes[i].selectedIndex];
             if (optionSelecionadoTemp.value != "") {
                 agentesSelecionados.push(optionSelecionadoTemp.value);
             }
         }
-        
-        for(var i = 0; i < selectsAgentes.length; i++) { 
+
+        for(var i = 0; i < selectsAgentes.length; i++) {
             for (var j = 0; j < selectsAgentes[i].children.length; j++) {
                 if (agentesSelecionados.includes(selectsAgentes[i].children[j].value)) {
                     selectsAgentes[i].children[j].disabled = true;

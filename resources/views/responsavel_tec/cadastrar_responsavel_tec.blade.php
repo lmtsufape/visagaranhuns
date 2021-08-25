@@ -96,7 +96,7 @@
                                 <div class="form-group col-md-4">
                                     @foreach ($areas as $item)
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="area" name="area[]" value="{{$item->id}}">
+                                            <input type="checkbox" class="form-check-input" id="area" name="area[]" value="{{$item->id}}" required>
                                             <label class="form-check-label" for="exampleCheck1">{{$item->nome}}</label>
                                         </div>
                                         {{-- <option value="{{$item->id}}">{{$item->nome}}</option> --}}
@@ -218,8 +218,8 @@
         // console.log($areaId);
         document.getElementById('idRespTecnicoDelete').value = $resptecId;
         document.getElementById('idEmpresa').value = $empresaId;
-        document.getElementById('idArea').value = $areaId; 
+        document.getElementById('idArea').value = $areaId;
 
     }
-    
+
 </script>

@@ -78,6 +78,10 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-4" style="padding-right:15px;">
+                                <label class="styleTituloDoInputCadastro" for="nome">Nome de Fantasia:</label>
+                                <input class="styleInputCadastro" type="text" id="nome_fantasia" name="nome_fantasia" placeholder="">
+                            </div>
+                            <div class="form-group col-md-4" style="padding-right:15px;">
                                 <label class="styleTituloDoInputCadastro" for="emailEmpresa">E-mail do estabelecimento:</label>
                                 <input class="styleInputCadastro" type="email" id="emailEmpresa" class="form-control" name="emailEmpresa" placeholder="">
                             </div>
@@ -242,17 +246,17 @@
     window.onload= function() {
 
         $('#cnpjcpf').blur(function(){
-    
+
             // O CPF ou CNPJ
             var cpf_cnpj = $(this).val();
-            
+
             // Testa a validação e formata se estiver OK
             if ( formata_cpf_cnpj( cpf_cnpj ) ) {
                 $(this).val( formata_cpf_cnpj( cpf_cnpj ) );
             } else {
                 alert('CPF ou CNPJ inválido!');
-            }    
-        });  
+            }
+        });
     };
 
 

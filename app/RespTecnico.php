@@ -14,7 +14,7 @@ class RespTecnico extends Model
      */
     protected $fillable = [
         // 'formacao', 'especializacao', 'cpf', 'telefone', 'user_id', 'area_id', 'empresa_id'
-        'formacao', 'especializacao', 'cpf', 'telefone', 'user_id'
+        'formacao', 'especializacao', 'cpf', 'telefone', 'conselho', 'num_conselho', 'user_id'
     ];
 
     public function empresa() {

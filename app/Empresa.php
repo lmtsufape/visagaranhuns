@@ -13,7 +13,7 @@ class Empresa extends Model
      * @var array
      */
     protected $fillable = [
-        'nome', 'email', 'cnpjcpf', 'status_inspecao', 'status_cadastro', 'tipo', 'user_id',
+        'nome', 'email', 'nome_fantasia', 'cnpjcpf', 'status_inspecao', 'status_cadastro', 'tipo', 'user_id',
     ];
 
     public function user() {

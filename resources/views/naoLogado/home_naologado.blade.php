@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                             <div class="p-2">
-                                <div style="margin-right:10px; cursor:pointer;" onclick="mostrarContato('mostrar1','texto1','img1')"><span id="texto1">Fechar</span></div>
+                                <div id="btnMostrar1" style="margin-right:10px; cursor:pointer;" onclick="mostrarContato('mostrar1','texto1','img1')"><span id="texto1">Fechar</span></div>
                             </div>
                         </div>
                         <div id="mostrar1" style="display:block;">
@@ -96,7 +96,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="cardMapa">
+                    <div class="cardMapa">
                         <div class="d-flex">
                             <div class="mr-auto p-2">
                                 <div class="btn-group">
@@ -112,12 +112,11 @@
                             <div class="container" style="margin-left:3px; font-family:arial; color:red">Segunda a Sexta - 08:00-14:00</div>
                             <div class="container" style="margin-left:3px; margin-bottom:10px; font-family:arial;">(87) 3762-7071</div>
                         </div>
-                    </div> --}}
-
-
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @endsection
